@@ -1,2 +1,1 @@
-web: gunicorn wikiHow.wsgi --timeout 30
-
+web: waitress-serve --port=$PORT wikiHow.wsgi:application
