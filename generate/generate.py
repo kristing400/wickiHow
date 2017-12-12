@@ -91,7 +91,7 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 20
+            maxTries = 10
             bestLine = None
             bestScore = 0
 
@@ -150,10 +150,11 @@ def randomize(title):
             currentThreshold = partsThreshold[i]
             res["partNumber"] = str(i+1)
             res["steps"] = []
+            iteration = 0
             # generate part title
             score = None
             # print(score,currentThreshold)
-            while (not score) or (score < currentThreshold):
+            while ((not score) or (score < currentThreshold)) and iteration < maxTries:
                 articleIndex = random.randint(0,n-1)
 
                 article = d['stories'][list(d['stories'].keys())[articleIndex]]
@@ -163,6 +164,7 @@ def randomize(title):
                 # step = unicodedata.normalize('NFKD', step).encode('ascii','ignore')
                 currentStep = tokenizer.tokenize(step)[0]
                 score = similarityScore(keywords,getKeywords(currentStep))
+                iteration += 1
                 # print("threshold", currentThreshold,"score",score)
 
             #get subtitle keywords
@@ -183,7 +185,8 @@ def randomize(title):
                 # (2-6) lines in each step
                 for lineI in range(linesLen):
                     score1, score2 = None, None
-                    while (not score1) or (not score2) or (score1 < currentThreshold) or (score2 < currentThreshold):
+                    iteration = 0
+                    while (iteration < maxTries) and ((not score1) or (not score2) or (score1 < currentThreshold) or (score2 < currentThreshold)):
                         article = d['stories'][list(d['stories'].keys())[random.randint(0,n-1)]]
                         article_step = article["steps"]
                         articleStepLen = len(article_step)
