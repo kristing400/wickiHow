@@ -11,7 +11,7 @@ from rake_nltk import Rake
 '''
 Basic Structure:
 maxIteration = 80 for pre-generated articles
-maxIteration = 5 for live articles
+maxIteration = 1 for live articles
 Intro: 4 sentences
       * sentences 1-4 will be "similar" to title
         with threshold = 0.80
@@ -97,7 +97,7 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 5
+            maxTries = 1
             bestLine = None
             bestScore = 0
 
