@@ -42,7 +42,6 @@ def similarityScore(wordlist1,wordlist2):
     # print(words)
     for word1 in wordlist1:
         for word2 in wordlist2:
-            print(word2)
             wordFromKeywords = wordnet.synsets(word1)
             wordFromWordsList = wordnet.synsets(word2)
             if wordFromKeywords and wordFromWordsList:
