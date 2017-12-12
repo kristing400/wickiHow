@@ -91,7 +91,7 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 50
+            maxTries = 20
             bestLine = None
             bestScore = 0
 

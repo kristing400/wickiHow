@@ -1,1 +1,2 @@
-web: waitress-serve --port=$PORT wikiHow.wsgi:application
+web: gunicorn wikiHow.wsgi --log-file -
+
