@@ -12,11 +12,11 @@ from rake_nltk import Rake
 Basic Structure:
 Intro: 4 sentences
       * sentences 1-4 will be "similar" to title
-        with threshold = 0.80 and maxIteraton of 70
+        with threshold = 0.80 and maxIteraton of 60
 Part 1: 1- 4 sub steps
       * each sub step has 1 - 6 lines
       * each sentence is "similar" with
-        threshold = 0.60 and matIter = 70
+        threshold = 0.60
 Part 2: 1- 4 sub steps
         each sub step has 1 - 6 lines
 Part 3: 1- 4 sub steps
@@ -78,7 +78,7 @@ def randomize(title):
             keywords = []
             for phrase in KW:
                 keywords += phrase.split(" ")
-            print(keywords)
+            # print(keywords)
 
 
         # images = d['images']
@@ -91,7 +91,7 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 70
+            maxTries = 60
             bestLine = None
             bestScore = 0
 
@@ -112,7 +112,7 @@ def randomize(title):
 
                 j = random.randint(0,introLen-1)
                 if(articleIndex,j) in tried:
-                    print("tried already")
+                    # print("tried already")
                     continue
                 tried.add((articleIndex,j))
                 line = article_intro[j].strip()
@@ -153,7 +153,7 @@ def randomize(title):
             res["steps"] = []
             # generate part title
             score = None
-            print(score,currentThreshold)
+            # print(score,currentThreshold)
             while (not score) or (score < currentThreshold):
                 articleIndex = random.randint(0,n-1)
 
@@ -175,7 +175,7 @@ def randomize(title):
             for phrase in keyPhrases:
                 subtitleKeywords += phrase.split(" ")
 
-            print(subtitleKeywords)
+            # print(subtitleKeywords)
 
             stepLen = random.randint(1,4)
             nsteps[i] = stepLen
