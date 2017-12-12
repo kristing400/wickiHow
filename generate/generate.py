@@ -10,7 +10,7 @@ from rake_nltk import Rake
 
 '''
 Basic Structure:
-maxIteration = 80 for pre-generated articles
+maxIteration = 100 for pre-generated articles
 maxIteration = 1 for live articles
 Intro: 4 sentences
       * sentences 1-4 will be "similar" to title
@@ -28,8 +28,10 @@ Part 3: 1- 4 sub steps
       * threshold = 0
 
 '''
+r = Rake()
+liveMode = True
+
 def getKeywords(line):
-    r = Rake()
     keywords = []
     r.extract_keywords_from_text(line)
     phrases = r.get_ranked_phrases()
@@ -97,11 +99,15 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 1
+            if liveMode:
+                maxTries = 1
+            else:
+                maxTries = 100
             bestLine = None
             bestScore = 0
 
             while not met:
+
                 introLen = 0
                 if numberOfTriedArticles >= maxTries:
                     line = bestLine
@@ -118,7 +124,6 @@ def randomize(title):
 
                 j = random.randint(0,introLen-1)
                 if(articleIndex,j) in tried:
-                    # print("tried already")
                     continue
                 tried.add((articleIndex,j))
                 line = article_intro[j].strip()
@@ -150,6 +155,7 @@ def randomize(title):
         intro = " ".join(intro)
         parts = []
         partsThreshold = [0.7,0.3,0]
+
         # 3 parts
         for i in range(3):
             res = {}
@@ -169,7 +175,8 @@ def randomize(title):
                 step = article_step[random.randint(0,articleStepLen-1)]
                 # step = unicodedata.normalize('NFKD', step).encode('ascii','ignore')
                 currentStep = tokenizer.tokenize(step)[0]
-                score = similarityScore(keywords,getKeywords(currentStep))
+                if not liveMode:
+                    score = similarityScore(keywords,getKeywords(currentStep))
                 iteration += 1
                 # print("threshold", currentThreshold,"score",score)
 
@@ -210,9 +217,11 @@ def randomize(title):
                         if re.search("\[\w+\]",selectedLine):
                             r = re.compile(r"\[(\w+)\]")
                             selectedLine = r.sub(r'',selectedLine).strip()
-                        lineKeywords = getKeywords(selectedLine)
-                        score1 = similarityScore(keywords,lineKeywords)
-                        score2 = similarityScore(subtitleKeywords,lineKeywords)
+                        if not liveMode:
+                            lineKeywords = getKeywords(selectedLine)
+                            score1 = similarityScore(keywords,lineKeywords)
+                            score2 = similarityScore(subtitleKeywords,lineKeywords)
+                        iteration += 1
 
 
                     # add to res strcture
@@ -221,7 +230,8 @@ def randomize(title):
                     else:
                         stepRes['title'] = selectedLine + " "
                         imagesLen = len(article['images'])
-                        stepRes['img'] = article['images'][random.randint(0,imagesLen-1)]
+                        if imagesLen:
+                            stepRes['img'] = article['images'][random.randint(0,imagesLen-1)]
 
                 p = " ".join(p)
                 stepRes['content'] = p
