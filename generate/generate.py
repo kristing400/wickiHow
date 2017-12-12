@@ -22,6 +22,14 @@ Part 2: 1- 4 sub steps
 Part 3: 1- 4 sub steps
         each sub step has 1 - 6 lines
 '''
+def getKeywords(line):
+    r = Rake()
+    keywords = []
+    r.extract_keywords_from_text(line)
+    phrases = r.get_ranked_phrases()
+    for phrase in phrases:
+        keywords += phrase.split(" ")
+    return keywords
 
 def similarityScore(wordlist1,wordlist2):
     tempList = []
@@ -58,14 +66,7 @@ def randomize(title):
         else:
             #title exists, use RAKE to find keywords
             maintitle = title
-            r = Rake() # Uses stopwords for english from NLTK, and all puntuation characters.
 
-            # If you want to provide your own set of stop words and punctuations to
-            # r = Rake(<list of stopwords>, <string of puntuations to ignore>)
-
-            r.extract_keywords_from_text(maintitle)
-
-            KW = r.get_ranked_phrases() # To get keyword phrases ranked highest to lowest.
             # K = word_tokenize(title)
             # catL = pos_tag(K)
             # print(catL)
@@ -75,9 +76,8 @@ def randomize(title):
             #         keywords.append(wd)
             # Error handling
             # if not len(keywords):
-            keywords = []
-            for phrase in KW:
-                keywords += phrase.split(" ")
+            keywords = getKeywords(maintitle)
+
             # print(keywords)
 
 
@@ -91,7 +91,7 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 60
+            maxTries = 70
             bestLine = None
             bestScore = 0
 
@@ -116,8 +116,7 @@ def randomize(title):
                     continue
                 tried.add((articleIndex,j))
                 line = article_intro[j].strip()
-                words = line.split(' ')
-                maxCurList = similarityScore(keywords,words)
+                maxCurList = similarityScore(keywords,getKeywords(line))
                 if not maxCurList:
                     numberOfTriedArticles +=1
                     continue
@@ -163,17 +162,12 @@ def randomize(title):
                 step = article_step[random.randint(0,articleStepLen-1)]
                 # step = unicodedata.normalize('NFKD', step).encode('ascii','ignore')
                 currentStep = tokenizer.tokenize(step)[0]
-                score = similarityScore(keywords,currentStep.split(" "))
+                score = similarityScore(keywords,getKeywords(currentStep))
                 # print("threshold", currentThreshold,"score",score)
 
             #get subtitle keywords
             res["subtitle"] = currentStep
-            r = Rake()
-            r.extract_keywords_from_text(currentStep)
-            keyPhrases = r.get_ranked_phrases()
-            subtitleKeywords = []
-            for phrase in keyPhrases:
-                subtitleKeywords += phrase.split(" ")
+            subtitleKeywords = getKeywords(currentStep)
 
             # print(subtitleKeywords)
 
@@ -207,8 +201,9 @@ def randomize(title):
                         if re.search("\[\w+\]",selectedLine):
                             r = re.compile(r"\[(\w+)\]")
                             selectedLine = r.sub(r'',selectedLine).strip()
-                        score1 = similarityScore(keywords,selectedLine.split(" "))
-                        score2 = similarityScore(subtitleKeywords,selectedLine.split(" "))
+                        lineKeywords = getKeywords(selectedLine)
+                        score1 = similarityScore(keywords,lineKeywords)
+                        score2 = similarityScore(subtitleKeywords,lineKeywords)
 
 
                     # add to res strcture
