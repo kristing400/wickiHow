@@ -6,5 +6,10 @@ from django.template import loader
 
 
 def index(request):
-    template = loader.get_template("index.html")
+    if request.GET:
+        title = request.GET['title']
+        template = loader.get_template("pre_generated/"+title+".htm")
+    else:
+        template = loader.get_template("index.html")
+
     return HttpResponse(template.render())

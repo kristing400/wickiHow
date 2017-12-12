@@ -10,17 +10,23 @@ from rake_nltk import Rake
 
 '''
 Basic Structure:
+maxIteration = 80 for pre-generated articles
+maxIteration = 5 for live articles
 Intro: 4 sentences
       * sentences 1-4 will be "similar" to title
-        with threshold = 0.80 and maxIteraton of 60
+        with threshold = 0.80
 Part 1: 1- 4 sub steps
       * each sub step has 1 - 6 lines
       * each sentence is "similar" with
-        threshold = 0.60
+        threshold = 0.70
 Part 2: 1- 4 sub steps
-        each sub step has 1 - 6 lines
+      * each sub step has 1 - 6 lines
+      * each sentence is "similar" with
+        threshold = 0.30
 Part 3: 1- 4 sub steps
-        each sub step has 1 - 6 lines
+      * each sub step has 1 - 6 lines
+      * threshold = 0
+
 '''
 def getKeywords(line):
     r = Rake()
@@ -36,6 +42,7 @@ def similarityScore(wordlist1,wordlist2):
     # print(words)
     for word1 in wordlist1:
         for word2 in wordlist2:
+            print(word2)
             wordFromKeywords = wordnet.synsets(word1)
             wordFromWordsList = wordnet.synsets(word2)
             if wordFromKeywords and wordFromWordsList:
@@ -91,7 +98,7 @@ def randomize(title):
             threshold = 0.80
             met = False
             numberOfTriedArticles = 0
-            maxTries = 10
+            maxTries = 5
             bestLine = None
             bestScore = 0
 
@@ -143,7 +150,7 @@ def randomize(title):
             intro.append(line)
         intro = " ".join(intro)
         parts = []
-        partsThreshold = [0.6,0.3,0]
+        partsThreshold = [0.7,0.3,0]
         # 3 parts
         for i in range(3):
             res = {}
