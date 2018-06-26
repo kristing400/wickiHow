@@ -29,7 +29,7 @@ Part 3: 1- 4 sub steps
 
 '''
 r = Rake()
-liveMode = True
+liveMode = False
 
 def getKeywords(line):
     keywords = []
